@@ -81,7 +81,11 @@ Abhishek`,
     res.status(500).json({ error: 'Error creating and storing data.', message: error.message });
   }
 };
-
+app.get('/',(req,res)=>{
+  res.status(200).json({
+    msg:"working ok",
+  })
+})
 // Route to handle form submission
 app.post('/api/create-data', createAndStoreData);
 
