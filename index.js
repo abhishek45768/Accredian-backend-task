@@ -13,10 +13,11 @@ const PORT = process.env.PORT || 5000;
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests from specific origins
-    if (
-      origin === 'https://abhishek-refer-and-earn-page.netlify.app' ||
-      origin === 'https://668f9e7af9e5470090a05017--abhishek-refer-and-earn-page.netlify.app'
-    ) {
+    const allowedOrigins = [
+      'https://abhishek-refer-and-earn-page.netlify.app',
+      'https://668f9e7af9e5470090a05017--abhishek-refer-and-earn-page.netlify.app',
+    ];
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -93,7 +94,7 @@ Abhishek`,
     console.log('Data saved to database and email sent:', newData);
     res.status(201).json(newData);
   } catch (error) {
-    console.error('Error creating and storing data:', error.message);
+    console.error('Error creating and storing data:', error);
     res.status(500).json({ error: 'Error creating and storing data.', message: error.message });
   }
 };
@@ -108,11 +109,8 @@ app.get('/', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  if (err.name === 'UnauthorizedError') {
-    res.status(401).json({ error: 'Unauthorized request!' });
-  } else {
-    res.status(500).json({ error: 'Something went wrong!' });
-  }
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
 });
 
 // Start server
