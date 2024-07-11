@@ -4,19 +4,23 @@ const { PrismaClient } = require('@prisma/client');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 require('dotenv').config();
-const corsConfig={
-  origin:"*",
-  credential:true,
-  methods:["GET","POST","PUT","DELETE"],
-};
+
 const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.options(cors(corsConfig));
-app.use(bodyParser.json());
+// CORS configuration
+const corsConfig = {
+  origin: "https://abhishek-refer-and-earn-page.netlify.app", // Change to your actual frontend URL in production
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"]
+};
+
 app.use(cors(corsConfig));
+app.options('*', cors(corsConfig));
+
+// Body parser middleware
+app.use(bodyParser.json());
 
 // Nodemailer Transporter Configuration
 const transporter = nodemailer.createTransport({
@@ -30,10 +34,7 @@ const transporter = nodemailer.createTransport({
 // Function to validate referral data
 const validateReferralData = (data) => {
   const { referrerName, referrerEmail, refereeName, refereeEmail } = data;
-  if (!referrerName || !referrerEmail || !refereeName || !refereeEmail) {
-    return false;
-  }
-  return true;
+  return referrerName && referrerEmail && refereeName && refereeEmail;
 };
 
 // Function to store referral data and send email
@@ -86,15 +87,16 @@ Abhishek`,
     res.status(500).json({ error: 'Error creating and storing data.', message: error.message });
   }
 };
-app.get('/',(req,res)=>{
-  res.status(200).json({
-    msg:"working ok",
-  })
-})
+
 // Route to handle form submission
 app.post('/api/create-data', createAndStoreData);
 
-// Start Server
+// Test route
+app.get('/', (req, res) => {
+  res.status(200).json({ msg: "Server is running and accepting requests." });
+});
+
+// Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
