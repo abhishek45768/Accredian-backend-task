@@ -1,10 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('@prisma/client'); // Database client
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 require('dotenv').config();
 
+// Initialize Prisma Client
 const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -48,7 +49,7 @@ const validateReferralData = (data) => {
   return referrerName && referrerEmail && refereeName && refereeEmail;
 };
 
-// Function to store referral data and send email
+// Function to handle form submission, store data, and send email
 const createAndStoreData = async (req, res) => {
   try {
     const isValid = validateReferralData(req.body);
@@ -56,7 +57,8 @@ const createAndStoreData = async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields.' });
     }
 
-    // Store data in database
+    // Commented out: Store data in database
+    /*
     const newData = await prisma.referral.create({
       data: {
         referrerName: req.body.referrerName,
@@ -65,6 +67,7 @@ const createAndStoreData = async (req, res) => {
         refereeEmail: req.body.refereeEmail,
       },
     });
+    */
 
     // Construct the referral link (modify this link according to your needs)
     const referralLink = `https://abhishek-refer-and-earn-page.netlify.app`;
@@ -91,11 +94,11 @@ Abhishek`,
     await transporter.sendMail(mailOptions);
 
     // Log success and return data
-    console.log('Data saved to database and email sent:', newData);
-    res.status(201).json(newData);
+    console.log('Email sent:', req.body);
+    res.status(201).json({ message: 'Referral email sent successfully.' });
   } catch (error) {
-    console.error('Error creating and storing data:', error);
-    res.status(500).json({ error: 'Error creating and storing data.', message: error.message });
+    console.error('Error sending email:', error);
+    res.status(500).json({ error: 'Error sending email.', message: error.message });
   }
 };
 
