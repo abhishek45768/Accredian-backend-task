@@ -10,14 +10,24 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // CORS configuration
-const corsConfig = {
-  origin: "https://abhishek-refer-and-earn-page.netlify.app", // Change to your actual frontend URL in production
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"]
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests from specific origins
+    if (
+      origin === 'https://abhishek-refer-and-earn-page.netlify.app' ||
+      origin === 'https://668f9e7af9e5470090a05017--abhishek-refer-and-earn-page.netlify.app'
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
-app.use(cors(corsConfig));
-app.options('*', cors(corsConfig));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Body parser middleware
 app.use(bodyParser.json());
@@ -94,6 +104,15 @@ app.post('/api/create-data', createAndStoreData);
 // Test route
 app.get('/', (req, res) => {
   res.status(200).json({ msg: "Server is running and accepting requests." });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({ error: 'Unauthorized request!' });
+  } else {
+    res.status(500).json({ error: 'Something went wrong!' });
+  }
 });
 
 // Start server
