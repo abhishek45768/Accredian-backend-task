@@ -46,8 +46,7 @@ const createAndStoreData = async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields.' });
     }
 
-    // Commented out: Store data in database
-    /*
+   
     const newData = await prisma.referral.create({
       data: {
         referrerName: req.body.referrerName,
@@ -56,7 +55,7 @@ const createAndStoreData = async (req, res) => {
         refereeEmail: req.body.refereeEmail,
       },
     });
-    */
+    
 
     // Construct the referral link (modify this link according to your needs)
     const referralLink = `https://abhishek-refer-and-earn-page.netlify.app`;
