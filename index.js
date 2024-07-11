@@ -10,20 +10,9 @@ const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS configuration
+// Simplified CORS configuration for testing
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests from specific origins
-    const allowedOrigins = [
-      'https://abhishek-refer-and-earn-page.netlify.app',
-      'https://668f9e7af9e5470090a05017--abhishek-refer-and-earn-page.netlify.app',
-    ];
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: '*', // Allow all origins for testing
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
